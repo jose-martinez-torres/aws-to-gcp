@@ -10,8 +10,9 @@ resource "google_pubsub_subscription" "bigquery_subscription" {
 
   bigquery_config {
     table = "${var.gcp_project_id}:${var.bigquery_table_dataset_id}.${var.bigquery_table_table_id}"
-    # When true, the subscription writes data to the table, and format is not required.
-    use_topic_schema = false
+    # When true, use the BigQuery table's schema as the columns to write to.
+    # Messages must be published in JSON format.
+    use_table_schema = true
     # When true, messages that fail schema validation are dropped.
     # When false, they are written to an _error topic.
     drop_unknown_fields = true
