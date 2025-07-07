@@ -22,7 +22,7 @@ resource "google_pubsub_subscription" "bigquery_subscription" {
   # are created *before* the subscription is created. This is required for BigQuery subscriptions
   # to prevent a race condition during the API's permission check.
   depends_on = [
-    google_bigquery_dataset_iam_member.pubsub_bq_writer,
+    google_bigquery_table_iam_member.pubsub_bq_writer,
     google_project_iam_member.pubsub_token_creator
   ]
 }
@@ -38,11 +38,13 @@ locals {
   pubsub_service_account = "service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
 }
 
-# Grant the service account the "BigQuery Data Editor" role on the specific dataset.
-# This is more secure and follows the principle of least privilege.
-resource "google_bigquery_dataset_iam_member" "pubsub_bq_writer" {
+# Grant the service account the "BigQuery Data Editor" role on the specific table.
+# This is the most secure approach, following the principle of least privilege by
+# scoping permissions to the single resource that needs it.
+resource "google_bigquery_table_iam_member" "pubsub_bq_writer" {
   project    = var.bigquery_table_project
   dataset_id = var.bigquery_table_dataset_id
+  table_id   = var.bigquery_table_table_id
   role       = "roles/bigquery.dataEditor"
   member     = "serviceAccount:${local.pubsub_service_account}"
 }
