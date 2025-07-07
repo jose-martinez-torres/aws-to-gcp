@@ -8,11 +8,6 @@ variable "gcp_project_id" {
   type        = string
 }
 
-variable "bigquery_table_project" {
-  description = "The project ID of the BigQuery table."
-  type        = string
-}
-
 variable "bigquery_table_dataset_id" {
   description = "The dataset ID of the BigQuery table."
   type        = string

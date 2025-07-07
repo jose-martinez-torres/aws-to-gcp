@@ -9,7 +9,7 @@ resource "google_pubsub_subscription" "bigquery_subscription" {
   topic = google_pubsub_topic.data_events.name
 
   bigquery_config {
-    table = "${var.bigquery_table_project}:${var.bigquery_table_dataset_id}.${var.bigquery_table_table_id}"
+    table = "${var.gcp_project_id}:${var.bigquery_table_dataset_id}.${var.bigquery_table_table_id}"
     # When true, the subscription writes data to the table, and format is not required.
     use_topic_schema = false
     # When true, messages that fail schema validation are dropped.
@@ -22,8 +22,7 @@ resource "google_pubsub_subscription" "bigquery_subscription" {
   # are created *before* the subscription is created. This is required for BigQuery subscriptions
   # to prevent a race condition during the API's permission check.
   depends_on = [
-    google_bigquery_table_iam_member.pubsub_bq_writer,
-    google_project_iam_member.pubsub_token_creator
+    google_bigquery_table_iam_member.pubsub_bq_writer
   ]
 }
 
@@ -42,16 +41,9 @@ locals {
 # This is the most secure approach, following the principle of least privilege by
 # scoping permissions to the single resource that needs it.
 resource "google_bigquery_table_iam_member" "pubsub_bq_writer" {
-  project    = var.bigquery_table_project
+  project    = var.gcp_project_id
   dataset_id = var.bigquery_table_dataset_id
   table_id   = var.bigquery_table_table_id
   role       = "roles/bigquery.dataEditor"
   member     = "serviceAccount:${local.pubsub_service_account}"
-}
-
-# Grant the service account the "Token Creator" role so it can create tokens to write
-resource "google_project_iam_member" "pubsub_token_creator" {
-  project = var.gcp_project_id
-  role    = "roles/iam.serviceAccountTokenCreator"
-  member  = "serviceAccount:${local.pubsub_service_account}"
 }
