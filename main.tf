@@ -34,7 +34,6 @@ module "pubsub_to_bigquery" {
 
   random_id                 = random_pet.this.id
   gcp_project_id            = var.gcp_project_id
-  bigquery_table_project    = module.gcp_data_lake.bigquery_table_project
   bigquery_table_dataset_id = module.gcp_data_lake.bigquery_dataset_id
   bigquery_table_table_id   = module.gcp_data_lake.bigquery_table_id
 }
