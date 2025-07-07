@@ -30,11 +30,13 @@ locals {
   pubsub_service_account = "service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
 }
 
-# Grant the service account the "BigQuery Data Editor" role on the project
-resource "google_project_iam_member" "pubsub_bq_writer" {
-  project = var.gcp_project_id
-  role    = "roles/bigquery.dataEditor"
-  member  = "serviceAccount:${local.pubsub_service_account}"
+# Grant the service account the "BigQuery Data Editor" role on the specific dataset.
+# This is more secure and follows the principle of least privilege.
+resource "google_bigquery_dataset_iam_member" "pubsub_bq_writer" {
+  project    = var.bigquery_table_project
+  dataset_id = var.bigquery_table_dataset_id
+  role       = "roles/bigquery.dataEditor"
+  member     = "serviceAccount:${local.pubsub_service_account}"
 }
 
 # Grant the service account the "Token Creator" role so it can create tokens to write

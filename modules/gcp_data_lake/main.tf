@@ -3,12 +3,13 @@
 resource "google_storage_bucket" "data_lake" {
   name          = "gcp-datalake-bucket-${var.random_id}"
   location      = var.gcp_location
+  uniform_bucket_level_access = true
   force_destroy = true # Set to false in production
 }
 
 # BigQuery Dataset (equivalent to a Glue Database)
 resource "google_bigquery_dataset" "events_db" {
-  dataset_id = "gcp_events_database_${var.random_id}"
+  dataset_id = "gcp_events_database_${replace(var.random_id, "-", "_")}"
   location   = var.gcp_location
 }
 
@@ -16,7 +17,7 @@ resource "google_bigquery_dataset" "events_db" {
 # This defines the schema for the data Pub/Sub will stream in.
 resource "google_bigquery_table" "events_table" {
   dataset_id = google_bigquery_dataset.events_db.dataset_id
-  table_id   = "gcp_events_table_${var.random_id}"
+  table_id   = "gcp_events_table_${replace(var.random_id, "-", "_")}"
   project    = var.gcp_project_id
 
   # The schema of the incoming JSON messages
