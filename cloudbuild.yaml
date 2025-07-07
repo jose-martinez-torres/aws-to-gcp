@@ -1,21 +1,29 @@
 steps:
+  # Initialize Terraform. This step also downloads the necessary providers.
   - name: 'hashicorp/terraform:1.8.2'
+    id: 'init'
+    entrypoint: 'terraform'
     args: ['init']
 
+  # Create a Terraform plan.
+  # We use the -var flag to pass the project ID and region.
+  # These values are supplied by the 'substitutions' section below.
   - name: 'hashicorp/terraform:1.8.2'
-    args: ['validate']
+    id: 'plan'
+    entrypoint: 'terraform'
+    args:
+      - 'plan'
+      - '-out=tfplan'
+      - '-var=gcp_project_id=${_GCP_PROJECT_ID}'
+      - '-var=gcp_region=${_GCP_REGION}'
+    waitFor: ['init']
 
+  # Apply the Terraform plan.
   - name: 'hashicorp/terraform:1.8.2'
-    args: ['plan', '-out=tfplan']
-
-  - name: 'hashicorp/terraform:1.8.2'
-    args: ['apply', '-auto-approve', 'tfplan']
-
-# This is equivalent to the artifacts section in buildspec.yml
-artifacts:
-  objects:
-    location: 'gs://${capgemini-mcdonalds-accelerator-tfartifacts}/' # Note: _BUCKET_NAME is a user-defined substitution variable
-    paths: ['tfplan']
-
-options:
-      logging: CLOUD_LOGGING_ONLY
+    id: 'apply'
+    entrypoint: 'terraform'
+    args:
+      - 'apply'
+      - '-auto-approve'
+      - 'tfplan'
+    waitFor: ['plan']
