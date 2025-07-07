@@ -16,3 +16,6 @@ artifacts:
   objects:
     location: 'gs://${capgemini-mcdonalds-accelerator-tfartifacts}/' # Note: _BUCKET_NAME is a user-defined substitution variable
     paths: ['tfplan']
+
+options:
+      logging: CLOUD_LOGGING_ONLY
