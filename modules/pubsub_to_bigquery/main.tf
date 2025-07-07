@@ -17,6 +17,14 @@ resource "google_pubsub_subscription" "bigquery_subscription" {
     drop_unknown_fields = true
     write_metadata      = false
   }
+
+  # This explicit dependency ensures the IAM permissions for the Pub/Sub service account
+  # are created *before* the subscription is created. This is required for BigQuery subscriptions
+  # to prevent a race condition during the API's permission check.
+  depends_on = [
+    google_bigquery_dataset_iam_member.pubsub_bq_writer,
+    google_project_iam_member.pubsub_token_creator
+  ]
 }
 
 # IAM: Grant the Pub/Sub service account permission to write to BigQuery
