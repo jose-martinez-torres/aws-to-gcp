@@ -1,0 +1,18 @@
+steps:
+  - name: 'hashicorp/terraform:1.8.2'
+    args: ['init']
+
+  - name: 'hashicorp/terraform:1.8.2'
+    args: ['validate']
+
+  - name: 'hashicorp/terraform:1.8.2'
+    args: ['plan', '-out=tfplan']
+
+  - name: 'hashicorp/terraform:1.8.2'
+    args: ['apply', '-auto-approve', 'tfplan']
+
+# This is equivalent to the artifacts section in buildspec.yml
+artifacts:
+  objects:
+    location: 'gs://${capgemini-mcdonalds-accelerator-tfartifacts}/' # Note: _BUCKET_NAME is a user-defined substitution variable
+    paths: ['tfplan']

@@ -1,5 +1,10 @@
-variable "aws_region" {
-  description = "The AWS region to create resources in."
+variable "gcp_project_id" {
+  description = "The GCP project ID to create resources in."
   type        = string
-  default     = "us-east-1"
+}
+
+variable "gcp_region" {
+  description = "The GCP region to create resources in."
+  type        = string
+  default     = "us-east1"
 }
