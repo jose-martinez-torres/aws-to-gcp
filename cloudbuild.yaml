@@ -30,3 +30,9 @@ steps:
 
 options:
       logging: CLOUD_LOGGING_ONLY
+
+# Substitutions allow you to define variables at build time.
+# You can override these when you trigger the build.
+substitutions:
+  _GCP_PROJECT_ID: 'gcp-agent-garden'
+  _GCP_REGION: 'us-central1'
