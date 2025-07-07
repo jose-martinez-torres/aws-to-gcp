@@ -27,3 +27,6 @@ steps:
       - '-auto-approve'
       - 'tfplan'
     waitFor: ['plan']
+
+options:
+      logging: CLOUD_LOGGING_ONLY
