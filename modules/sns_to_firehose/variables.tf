@@ -1,9 +1,9 @@
-variable "random_id" {
-  description = "A random string to append to resource names for uniqueness."
+variable "unique_suffix" {
+  description = "A unique suffix to append to all resource names to ensure uniqueness."
   type        = string
 }
 
 variable "kinesis_firehose_stream_arn" {
-  description = "The ARN of the Kinesis Firehose delivery stream to subscribe to."
+  description = "The ARN of the Kinesis Firehose stream to subscribe to."
   type        = string
 }
